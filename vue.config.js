@@ -8,7 +8,7 @@ module.exports = {
   },
   devServer: {
     disableHostCheck: true,
-    public: process.env.DEV_PUBLIC ?? "kangami.ru",
+    public: process.env.DEV_PUBLIC ?? "kangami.over.ru",
     port: process.env.DEV_PORT ?? 8080
   }
 };

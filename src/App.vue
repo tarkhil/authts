@@ -2,11 +2,37 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> |
+      <span v-if="$store.getters.userName !== null">
+	<a @click="logout">logout</a>
+      </span>
+      <span v-else>
+	<router-link to="/login">Login</router-link>
+      </span>
     </div>
     <router-view />
   </div>
 </template>
+
+<script lang="ts">
+  import { Component, Vue } from "vue-property-decorator";
+  import firebase from 'firebase/app';
+
+  @Component
+  export default class App extends Vue {
+  logout() {
+  firebase
+  .auth()
+  .signOut()
+  .then(() => {
+  this.$router.replace({
+  name: "Login"
+  });
+  });
+  }
+  }
+  
+</script>
 
 <style>
 #app {

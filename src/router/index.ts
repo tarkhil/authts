@@ -10,6 +10,14 @@ const routes: Array<RouteConfig> = [
     name: "Home",
     component: Home
   },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/Login.vue'),
+      meta: {
+	  requiresAuth: false
+      }
+  },
   {
     path: "/about",
     name: "About",
@@ -22,7 +30,8 @@ const routes: Array<RouteConfig> = [
 ];
 
 const router = new VueRouter({
-  routes
+    routes,
+    //mode: "history",
 });
 
 export default router;
