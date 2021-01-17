@@ -1,5 +1,6 @@
 <template>
 <div class="hello">
+  {{ fakeGetter }}
   <div v-if="$store.userName !== null">
     Hello {{ $store.getters.userName }}!
   </div>
@@ -16,6 +17,10 @@ import firebase from 'firebase';
 @Component
 export default class HelloWorld extends Vue {
     @Prop() private msg!: string;
+    get fakeGetter() {
+	console.log("fake getter fired");
+	return("logged");
+    }
 }
 </script>
 

@@ -9,49 +9,29 @@ import firebaseAppConfig from "./firebaseauth";
 Vue.config.productionTip = false;
 
 firebase.initializeApp(firebaseAppConfig);
-// firebase.getCurrentUser = () => {
-//     return new Promise((resolve, reject) => {
-// 	const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-// 	    unsubscribe();
-// 	    resolve(user);
-// 	}, reject);
-//     })
-// };
+
+import getCurrentUser from "./getCurrentUser";
 
 const methods = {
-    getCurrentUser: () => {
-	console.log('Getting current user');
-	return new Promise((resolve, reject) => {
-	    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-		unsubscribe();
-		resolve(user);
-	    }, reject);
-	})
-    },
+    getCurrentUser
 };
 
 
-new Vue({
+const app = new Vue({
   router,
     store,
     methods,
-    // get user() {
-    // 	return (async () => await this.getCurrentUser())();
-    // },
-    async created() {
-	console.log("Installing auth handler");
-	if (!await this.getCurrentUser()) {
-	    this.$router.push('/login');
-	}
+    created() {
+	console.log("Fixing router");
 	this.$router.beforeEach(async (to, from, next) => {
 	    console.log("Before router");
 	    const requiresAuth = to.matched.some(record =>
 		{
 		    console.log('Record is');
 		    console.log(record);
-		    console.log(record.meta.requiresAuth??true);
+		    console.log(`Auth required: ${record.meta.requiresAuth??true}`);
 		    return record.meta.requiresAuth??true; } );
-	    if (requiresAuth && !await this.getCurrentUser()){
+	    if (requiresAuth && (async () => !await getCurrentUser())()){
 		console.log('Auth required, but no current user');
 		this.$store.commit('userName', null);
 		next('Login');
@@ -66,19 +46,32 @@ new Vue({
 		next();
 	    }
 	});
-
-	// firebase.auth().onAuthStateChanged((user) => {
-	//     if(user) {
-	// 	console.log('user is now:');
-	// 	console.log(user);
-	// 	//this.$router.push('/')
-	//     } else {
-	// 	console.log('Logged out');
-	// 	this.$router.push('/login')
-	//     }
-	// });
-	// console.log(firebase.auth().currentUser);
-	// console.log("Installed");
     },
     render: h => h(App)
-}).$mount("#app");
+});
+
+// router.beforeEach(async (to, from, next) => {
+//     console.log("Before router");
+//     const requiresAuth = to.matched.some(record =>
+// 	{
+// 	    console.log('Record is');
+// 	    console.log(record);
+// 	    console.log(record.meta.requiresAuth??true);
+// 	    return record.meta.requiresAuth??true; } );
+//     if (requiresAuth && (async () => !await app.getCurrentUser())()){
+// 	console.log('Auth required, but no current user');
+// 	app.$store.commit('userName', null);
+// 	next('Login');
+//     }else{
+// 	console.log('Auth ok, looking for current user');
+// 	console.log(firebase.auth().currentUser);
+// 	if ( firebase.auth().currentUser !== null ) {
+// 	    app.$store.commit('userName', firebase.auth().currentUser!.displayName);
+// 	} else {
+// 	    app.$store.commit('userName', null);
+// 	}
+// 	next();
+//     }
+// });
+
+app.$mount("#app");
